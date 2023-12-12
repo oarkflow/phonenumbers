@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 	"strconv"
-
-	"github.com/nyaruka/phonenumbers"
+	
+	"github.com/oarkflow/phonenumbers"
 )
 
 func main() {
@@ -13,12 +13,12 @@ func main() {
 		fmt.Println("usage: phoneparser [number] [two letter coutry]")
 		os.Exit(1)
 	}
-
+	
 	num, err := phonenumbers.Parse(os.Args[1], os.Args[2])
 	if err != nil {
 		fmt.Printf("Error parsing number: %s\n", err)
 	}
-
+	
 	metadata, err := phonenumbers.Parse(os.Args[1], os.Args[2])
 	if err != nil {
 		fmt.Printf("error parsing phone", err.Error())
@@ -27,5 +27,5 @@ func main() {
 	fmt.Printf("National Dialing: %s\n", phonenumbers.Format(num, phonenumbers.NATIONAL))
 	fmt.Printf("        National: %d\n", *num.NationalNumber)
 	fmt.Printf("         IsValid: %s\n", strconv.FormatBool(phonenumbers.IsValidNumber(metadata)))
-
+	
 }

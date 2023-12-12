@@ -21,7 +21,7 @@ import (
 
 	"google.golang.org/protobuf/proto"
 
-	"github.com/nyaruka/phonenumbers"
+	"github.com/oarkflow/phonenumbers"
 )
 
 type prefixBuild struct {

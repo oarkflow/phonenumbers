@@ -1,15 +1,12 @@
-module github.com/nyaruka/phonenumbers
+module github.com/oarkflow/phonenumbers
 
 require (
-	github.com/stretchr/testify v1.7.1
-	golang.org/x/text v0.3.8
+	github.com/oarkflow/errors v0.0.6
+	github.com/oarkflow/pkg v0.0.99
+	golang.org/x/text v0.14.0
 	google.golang.org/protobuf v1.31.0
 )
 
-require (
-	github.com/davecgh/go-spew v1.1.0 // indirect
-	github.com/pmezard/go-difflib v1.0.0 // indirect
-	gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c // indirect
-)
+require github.com/klauspost/compress v1.17.4 // indirect
 
-go 1.18
+go 1.21.0

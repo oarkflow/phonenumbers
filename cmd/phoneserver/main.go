@@ -3,10 +3,10 @@ package main
 import (
 	"encoding/json"
 	"net/http"
-
+	
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
-	"github.com/nyaruka/phonenumbers"
+	"github.com/oarkflow/phonenumbers"
 )
 
 var Version = "dev"
@@ -34,7 +34,7 @@ func writeResponse(status int, body interface{}) (events.APIGatewayProxyResponse
 			Body:       err.Error(),
 		}, nil
 	}
-
+	
 	return events.APIGatewayProxyResponse{
 		StatusCode: 200,
 		Body:       string(js),
@@ -44,20 +44,20 @@ func writeResponse(status int, body interface{}) (events.APIGatewayProxyResponse
 
 func parse(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	phone := request.QueryStringParameters["phone"]
-
+	
 	// required phone number
 	if phone == "" {
 		return writeResponse(http.StatusBadRequest, errorResponse{"missing body", "missing 'phone' parameter"})
 	}
-
+	
 	// optional country code
 	country := request.QueryStringParameters["country"]
-
+	
 	metadata, err := phonenumbers.Parse(phone, country)
 	if err != nil {
 		return writeResponse(http.StatusBadRequest, errorResponse{"error parsing phone", err.Error()})
 	}
-
+	
 	return writeResponse(http.StatusOK, successResponse{
 		NationalNumber:         *metadata.NationalNumber,
 		CountryCode:            *metadata.CountryCode,
