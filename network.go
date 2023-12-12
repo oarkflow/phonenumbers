@@ -20,7 +20,7 @@ type Network struct {
 var CountryNetwork = map[string][]Network{}
 
 func LoadNetworks() error {
-	if CountryNetwork != nil {
+	if len(CountryNetwork) > 0 {
 		return nil
 	}
 	data, err := str.DecodeBinaryString(networkMap)
