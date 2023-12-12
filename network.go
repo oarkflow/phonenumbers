@@ -2,6 +2,7 @@ package phonenumbers
 
 import (
 	"encoding/json"
+
 	"github.com/oarkflow/pkg/str"
 )
 
@@ -19,6 +20,9 @@ type Network struct {
 var CountryNetwork = map[string][]Network{}
 
 func LoadNetworks() error {
+	if CountryNetwork != nil {
+		return nil
+	}
 	data, err := str.DecodeBinaryString(networkMap)
 	if err != nil {
 		return err
