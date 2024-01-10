@@ -6,6 +6,7 @@ import (
 	"encoding/csv"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"strings"
 	"sync"
@@ -17,6 +18,7 @@ func GetCsvHeader(scanner *bufio.Scanner, comma rune) map[int]string {
 	scanner.Scan()
 	r := csv.NewReader(strings.NewReader(scanner.Text()))
 	r.Comma = comma
+	r.TrimLeadingSpace = true
 	colHeader, _ := r.Read()
 	colPosition := make(map[int]string)
 	for key, col := range colHeader {
@@ -25,7 +27,41 @@ func GetCsvHeader(scanner *bufio.Scanner, comma rune) map[int]string {
 	return colPosition
 }
 
-func ValidatePhone(csvFile, out, phoneKey string, comma rune, outputComma rune) error {
+func ValidatePhoneReader(reader io.Reader, phoneKey string, comma rune, defaultPrefix string) []map[string]string {
+	scanner := bufio.NewScanner(reader)
+	colPosition := GetCsvHeader(scanner, comma)
+	for k, v := range colPosition {
+		colPosition[k] = clean([]byte(v))
+	}
+	jobs := make(chan []byte)
+	results := make(chan map[string]string)
+
+	wg := new(sync.WaitGroup)
+	for w := 1; w <= 2; w++ {
+		wg.Add(1)
+		go ProcessNumber(jobs, results, wg, colPosition, phoneKey, comma, defaultPrefix)
+	}
+	go func() {
+		for scanner.Scan() {
+			jobs <- scanner.Bytes()
+		}
+		close(jobs)
+	}()
+
+	go func() {
+		wg.Wait()
+		close(results)
+	}()
+
+	var data []map[string]string
+	for v := range results {
+		data = append(data, v)
+	}
+
+	return data
+}
+
+func ValidatePhone(csvFile, out, phoneKey string, comma rune, outputComma rune, defaultPrefix string) error {
 	file, err := os.Open(csvFile)
 	if err != nil {
 		return errors.New("File not found or unable to open")
@@ -43,18 +79,13 @@ func ValidatePhone(csvFile, out, phoneKey string, comma rune, outputComma rune) 
 	jobs := make(chan []byte)
 	results := make(chan map[string]string)
 
-	// I think we need a wait group, not sure.
 	wg := new(sync.WaitGroup)
-	// start up some workers that will block and wait?
 	for w := 1; w <= 2; w++ {
 		wg.Add(1)
-		go ProcessNumber(jobs, results, wg, colPosition, phoneKey, comma)
+		go ProcessNumber(jobs, results, wg, colPosition, phoneKey, comma, defaultPrefix)
 	}
-
-	// Go over a file line by line and queue up a ton of work
 	go func() {
 		for scanner.Scan() {
-			// Later I want to create a buffer of lines, not just line-by-line here ...
 			jobs <- scanner.Bytes()
 		}
 		close(jobs)
@@ -111,15 +142,15 @@ func clean(s []byte) string {
 		if ('a' <= b && b <= 'z') ||
 			('A' <= b && b <= 'Z') ||
 			('0' <= b && b <= '9') ||
-			b == ' ' {
+			b == ' ' || b == '_' {
 			s[j] = b
 			j++
 		}
 	}
-	return string(s[:j])
+	return strings.TrimSpace(string(s[:j]))
 }
 
-func ProcessNumber(jobs <-chan []byte, results chan<- map[string]string, wg *sync.WaitGroup, col map[int]string, phoneKey string, comma rune) {
+func ProcessNumber(jobs <-chan []byte, results chan<- map[string]string, wg *sync.WaitGroup, col map[int]string, phoneKey string, comma rune, defaultPrefix string) {
 	// Decreasing internal counter for wait-group as soon as goroutine finishes
 	defer wg.Done()
 
@@ -128,15 +159,16 @@ func ProcessNumber(jobs <-chan []byte, results chan<- map[string]string, wg *syn
 		data := make(map[string]string)
 		r := csv.NewReader(bytes.NewReader(j))
 		r.Comma = comma
+		r.TrimLeadingSpace = true
 		fields, _ := r.Read()
 		for key, dt := range fields {
-			data[col[key]] = dt
+			data[col[key]] = strings.TrimSpace(dt)
 		}
-		num := phonenumbers.Number{}
-		num.Phone = data[phoneKey]
+		num := phonenumbers.Number{DefaultPrefix: defaultPrefix}
+		num.Phone = strings.TrimSpace(data[phoneKey])
 		num.Verify()
 		validatedPhone := "validated_" + phoneKey
-		validPhone := "is_invalid_" + phoneKey
+		validPhone := "invalid_" + phoneKey
 		data["region"] = num.CountryCode
 		data[validatedPhone] = num.Phone
 		data["phone_type_label"] = num.PhoneTypeHuman
