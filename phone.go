@@ -50,32 +50,32 @@ var Type = map[int]string{
 
 type Number struct {
 	Phone          string `query:"phone" json:"phone" csv:"phone"`
-	DefaultPrefix  string `query:"default_prefix" json:"default_prefix,omitempty" csv:"default_prefix,omitempty"`
-	PhoneTypeHuman string `json:"phone_type_human,omitempty" csv:"phone_type_human,omitempty"`
-	CarrierName    string `json:"carrier_name,omitempty" csv:"carrier_name,omitempty"`
-	CarrierMcc     string `json:"carrier_mcc,omitempty" csv:"carrier_mcc,omitempty"`
-	CarrierMnc     string `json:"carrier_mnc,omitempty" csv:"carrier_mnc,omitempty"`
-	CarrierNnc     string `json:"carrier_nnc,omitempty" csv:"carrier_nnc,omitempty"`
-	CountryName    string `json:"country_name,omitempty" csv:"country_name,omitempty"`
-	CountryCode    string `json:"country_code,omitempty" csv:"country_code,omitempty"`
-	Currency       string `json:"currency,omitempty" csv:"currency,omitempty"`
-	CurrencySymbol string `json:"currency_symbol,omitempty" csv:"currency_symbol,omitempty"`
-	Timezone       string `json:"timezone,omitempty" csv:"timezone,omitempty"`
-	Invalid        bool   `json:"invalid,omitempty" csv:"invalid,omitempty"`
-	DialCode       int32  `json:"dial_code,omitempty" csv:"dial_code,omitempty"`
-	PhoneType      int    `json:"phone_type,omitempty" csv:"phone_type,omitempty"`
+	DefaultPrefix  string `query:"default_prefix" json:"default_prefix" csv:"default_prefix"`
+	PhoneTypeHuman string `json:"phone_type_human" csv:"phone_type_human"`
+	CarrierName    string `json:"carrier_name" csv:"carrier_name"`
+	CarrierMcc     string `json:"carrier_mcc" csv:"carrier_mcc"`
+	CarrierMnc     string `json:"carrier_mnc" csv:"carrier_mnc"`
+	CarrierNnc     string `json:"carrier_nnc" csv:"carrier_nnc"`
+	CountryName    string `json:"country_name" csv:"country_name"`
+	CountryCode    string `json:"country_code" csv:"country_code"`
+	Currency       string `json:"currency" csv:"currency"`
+	CurrencySymbol string `json:"currency_symbol" csv:"currency_symbol"`
+	Timezone       string `json:"timezone" csv:"timezone"`
+	Invalid        bool   `json:"invalid" csv:"invalid"`
+	DialCode       int32  `json:"dial_code" csv:"dial_code"`
+	PhoneType      int    `json:"phone_type" csv:"phone_type"`
 }
 
 type Numbers struct {
 	Phones        []string `json:"phones"`
-	DefaultPrefix string   `query:"default_prefix" json:"default_prefix,omitempty"`
+	DefaultPrefix string   `query:"default_prefix" json:"default_prefix"`
 	PhoneTypes    []string `json:"phone_types"`
 	PhoneOnly     bool     `json:"phone_only"`
 }
 
 type VerifiedNumbers struct {
 	Phones        []Number `json:"phones"`
-	DefaultPrefix string   `query:"default_prefix" json:"default_prefix,omitempty"`
+	DefaultPrefix string   `query:"default_prefix" json:"default_prefix"`
 	PhoneTypes    []string `json:"phone_types"`
 }
 
@@ -94,21 +94,21 @@ type Ops struct {
 type Query struct {
 	Raw        string   `json:"raw"`
 	Fields     []string `json:"fields"`
-	Operations []Ops    `json:"operations,omitempty"`
+	Operations []Ops    `json:"operations"`
 	GroupBy    []string `json:"group_by"`
 }
 
 type AnalyzeCarrierResult struct {
-	CarrierName string `json:"carrier_name,omitempty"`
-	CarrierCode string `json:"carrier_code,omitempty"`
-	CountryCode string `json:"country,omitempty"`
-	PhoneType   string `json:"phone_type,omitempty"`
+	CarrierName string `json:"carrier_name"`
+	CarrierCode string `json:"carrier_code"`
+	CountryCode string `json:"country"`
+	PhoneType   string `json:"phone_type"`
 	PhoneCount  int    `json:"phone_count"`
 }
 
 type AnalyzeCountryResult struct {
-	CountryCode string `json:"country,omitempty"`
-	PhoneType   string `json:"phone_type,omitempty"`
+	CountryCode string `json:"country"`
+	PhoneType   string `json:"phone_type"`
 	PhoneCount  int    `json:"phone_count"`
 }
 
