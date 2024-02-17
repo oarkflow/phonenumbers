@@ -7,7 +7,7 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 	
-	"github.com/oarkflow/phonenumbers"
+	"github.com/nyaruka/phonenumbers"
 )
 
 var Version = "dev"

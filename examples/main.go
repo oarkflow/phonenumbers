@@ -7,8 +7,8 @@ import (
 	"log"
 	"strings"
 
-	"github.com/oarkflow/phonenumbers"
-	"github.com/oarkflow/phonenumbers/services"
+	"github.com/nyaruka/phonenumbers"
+	"github.com/nyaruka/phonenumbers/services"
 )
 
 func main() {

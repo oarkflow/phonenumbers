@@ -14,7 +14,7 @@ import (
 	"golang.org/x/text/language/display"
 	"google.golang.org/protobuf/proto"
 
-	"github.com/oarkflow/phonenumbers/gen"
+	"github.com/nyaruka/phonenumbers/gen"
 )
 
 const (

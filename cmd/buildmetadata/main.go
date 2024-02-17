@@ -17,7 +17,7 @@ import (
 	"golang.org/x/exp/maps"
 	"google.golang.org/protobuf/proto"
 
-	"github.com/oarkflow/phonenumbers"
+	"github.com/nyaruka/phonenumbers"
 )
 
 func main() {

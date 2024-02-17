@@ -11,7 +11,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/oarkflow/phonenumbers"
+	"github.com/nyaruka/phonenumbers"
 )
 
 func GetCsvHeader(scanner *bufio.Scanner, comma rune) map[int]string {

@@ -1,4 +1,4 @@
-module github.com/oarkflow/phonenumbers
+module github.com/nyaruka/phonenumbers
 
 go 1.22.0
 

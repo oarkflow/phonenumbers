@@ -3,7 +3,7 @@ package phonenumbers
 import (
 	"google.golang.org/protobuf/proto"
 
-	"github.com/oarkflow/phonenumbers/gen"
+	"github.com/nyaruka/phonenumbers/gen"
 )
 
 var (
