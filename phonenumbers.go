@@ -13,6 +13,8 @@ import (
 	"golang.org/x/text/language"
 	"golang.org/x/text/language/display"
 	"google.golang.org/protobuf/proto"
+
+	"github.com/oarkflow/phonenumbers/gen"
 )
 
 const (
@@ -699,7 +701,7 @@ func MetadataCollection() (*PhoneMetadataCollection, error) {
 		return currMetadataColl, nil
 	}
 
-	rawBytes, err := decodeUnzipString(metadataData)
+	rawBytes, err := decodeUnzipString(gen.NumberData)
 	if err != nil {
 		return nil, err
 	}
@@ -778,16 +780,6 @@ func normalize(number string) string {
 		return normalizeHelper(number, ALPHA_PHONE_MAPPINGS, true)
 	}
 	return NormalizeDigitsOnly(number)
-}
-
-// Normalizes a string of characters representing a phone number. This is
-// a wrapper for normalize(String number) but does in-place normalization
-// of the StringBuilder provided.
-func normalizeBytes(number *Builder) *Builder {
-	normalizedNumber := normalize(number.String())
-	b := number.Bytes()
-	copy(b[0:len(normalizedNumber)], []byte(normalizedNumber))
-	return NewBuilder(b)
 }
 
 // Normalizes a string of characters representing a phone number. This
@@ -2445,21 +2437,6 @@ func IsPossibleNumberWithReason(number *PhoneNumber) ValidationResult {
 	return testNumberLength(nationalNumber, metadata, UNKNOWN)
 }
 
-// Check whether a phone number is a possible number given a number in the
-// form of a string, and the region where the number could be dialed from.
-// It provides a more lenient check than IsValidNumber(). See
-// IsPossibleNumber(PhoneNumber) for details.
-//
-// This method first parses the number, then invokes
-// IsPossibleNumber(PhoneNumber) with the resultant PhoneNumber object.
-func isPossibleNumberWithRegion(number, regionDialingFrom string) bool {
-	num, err := Parse(number, regionDialingFrom)
-	if err != nil {
-		return false
-	}
-	return IsPossibleNumber(num)
-}
-
 // Attempts to extract a valid number from a phone number that is too long
 // to be valid, and resets the PhoneNumber object passed in to that valid
 // version. If no valid number could be extracted, the PhoneNumber object
@@ -3320,7 +3297,7 @@ func IsMobileNumberPortableRegion(regionCode string) bool {
 
 func init() {
 	// load our regions
-	regionMap, err := loadIntStringArrayMap(regionMapData)
+	regionMap, err := loadIntStringArrayMap(gen.RegionData)
 	if err != nil {
 		panic(err)
 	}
@@ -3362,10 +3339,10 @@ func init() {
 	}
 
 	// Create our sync.Onces for each of our languages for carriers
-	for lang := range carrierMapData {
+	for lang := range gen.CarrierData {
 		carrierOnces[lang] = &sync.Once{}
 	}
-	for lang := range geocodingMapData {
+	for lang := range gen.GeocodingData {
 		geocodingOnces[lang] = &sync.Once{}
 	}
 }
@@ -3377,7 +3354,7 @@ func init() {
 func GetTimezonesForPrefix(number string) ([]string, error) {
 	var err error
 	timezoneOnce.Do(func() {
-		timezoneMap, err = loadIntStringArrayMap(timezoneMapData)
+		timezoneMap, err = loadIntStringArrayMap(gen.TimezoneData)
 	})
 
 	if timezoneMap == nil {
@@ -3472,7 +3449,7 @@ func GetSafeCarrierDisplayNameForNumber(phoneNumber *PhoneNumber, lang string) (
 // GetCarrierWithPrefixForNumber returns the carrier we believe the number belongs to, as well as
 // its prefix. Note due to number porting this is only a guess, there is no guarantee to its accuracy.
 func GetCarrierWithPrefixForNumber(number *PhoneNumber, lang string) (string, int, error) {
-	carrier, prefix, err := getValueForNumber(carrierOnces, carrierPrefixMap, carrierMapData, lang, 10, number)
+	carrier, prefix, err := getValueForNumber(carrierOnces, carrierPrefixMap, gen.CarrierData, lang, 10, number)
 	if err != nil {
 		return "", 0, err
 	}
@@ -3481,19 +3458,19 @@ func GetCarrierWithPrefixForNumber(number *PhoneNumber, lang string) (string, in
 	}
 
 	// fallback to english
-	return getValueForNumber(carrierOnces, carrierPrefixMap, carrierMapData, "en", 10, number)
+	return getValueForNumber(carrierOnces, carrierPrefixMap, gen.CarrierData, "en", 10, number)
 }
 
 // GetGeocodingForNumber returns the location we think the number was first acquired in. This is
 // just our best guess, there is no guarantee to its accuracy.
 func GetGeocodingForNumber(number *PhoneNumber, lang string) (string, error) {
-	geocoding, _, err := getValueForNumber(geocodingOnces, geocodingPrefixMap, geocodingMapData, lang, 10, number)
+	geocoding, _, err := getValueForNumber(geocodingOnces, geocodingPrefixMap, gen.GeocodingData, lang, 10, number)
 	if err != nil || geocoding != "" {
 		return geocoding, err
 	}
 
 	// fallback to english
-	geocoding, _, err = getValueForNumber(geocodingOnces, geocodingPrefixMap, geocodingMapData, "en", 10, number)
+	geocoding, _, err = getValueForNumber(geocodingOnces, geocodingPrefixMap, gen.GeocodingData, "en", 10, number)
 	if err != nil || geocoding != "" {
 		return geocoding, err
 	}

@@ -19,7 +19,7 @@ func main() {
 	}
 	// read our opened jsonFile as a byte array.
 	byteValue, _ := io.ReadAll(jsonFile)
-	str.GenerateBinaryContent("phone", "networkMap", byteValue, "networks.go")
+	str.GenerateBinaryContent("phonenumbers", "networkMap", byteValue, "networks.go")
 
 }
 

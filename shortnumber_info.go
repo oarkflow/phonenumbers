@@ -2,6 +2,8 @@ package phonenumbers
 
 import (
 	"google.golang.org/protobuf/proto"
+
+	"github.com/oarkflow/phonenumbers/gen"
 )
 
 var (
@@ -34,7 +36,7 @@ func ShortNumberMetadataCollection() (*PhoneMetadataCollection, error) {
 		return currShortNumberMetadataColl, nil
 	}
 
-	rawBytes, err := decodeUnzipString(shortNumberMetadataData)
+	rawBytes, err := decodeUnzipString(gen.ShortNumberData)
 	if err != nil {
 		return nil, err
 	}
